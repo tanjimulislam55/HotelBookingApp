@@ -1,0 +1,11 @@
+fastapi
+asyncpg
+SQLAlchemy
+alembic
+uvicorn
+python-jose
+passlib
+python-multipart
+python-dotenv
+black
+flake8
