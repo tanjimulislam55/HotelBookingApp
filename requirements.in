@@ -9,3 +9,5 @@ python-multipart
 python-dotenv
 black
 flake8
+ujson
+databases
