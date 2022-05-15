@@ -1,13 +1,33 @@
-from sqlalchemy.ext.asyncio import AsyncSession
-from db.config import async_session
+from fastapi import Depends, status
+from fastapi.exceptions import HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from pydantic import ValidationError
+from jose import jwt
 
-async def get_session() -> AsyncSession:
-        print("*" * 50)
-        print("Get DB CALLED")
-        print("*" * 50)
-        async with async_session() as session:
-            # async with session.begin():
-            print("*" * 50)
-            print("Session Yielded")
-            print("*" * 50)
-            yield session
+from schemas import TokenPayload
+from models import User
+from settings import settings
+from crud.users import user
+
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+)
+
+def get_current_user(token: str = Depends(oauth2_scheme)
+) -> User:
+    try:
+        payload = jwt.decode(
+            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
+        )
+        token_data = TokenPayload(**payload)
+    except (jwt.JWTError, ValidationError):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
+
+    return user.get_one_by_email(email=token_data.sub)
+
+def get_current_active_superuser(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    if not current_user.is_superuser:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+    return current_user

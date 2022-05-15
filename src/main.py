@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware  
 from fastapi.responses import UJSONResponse
 import uvicorn
-from databases import Database
 
 from settings import settings
+from utils.db import database
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
@@ -16,8 +16,6 @@ if settings.BACKEND_CORS_ORIGINS:
         allow_methods=["*"],
         allow_headers=["*"],
     )
-
-database = Database(settings.DATABASE_URL)
 
 @app.on_event("startup")
 async def startup():
