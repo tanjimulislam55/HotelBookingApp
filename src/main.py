@@ -5,6 +5,7 @@ import uvicorn
 
 from settings import settings
 from utils.db import database
+from api.api_v1.routers import api_router
 
 app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
@@ -28,6 +29,8 @@ async def shutdown():
 @app.get("/")
 async def root():
     return UJSONResponse(content={"key": "value"})
+
+app.include_router(api_router, prefix=settings.API_V1_STR)
 
 if __name__ == "__main__":
     uvicorn.run("main:app", port=8000, host="127.0.0.1", reload=True)

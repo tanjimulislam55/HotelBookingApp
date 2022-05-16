@@ -10,7 +10,7 @@ from settings import settings
 from crud.users import user
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/login/access-token"
+    tokenUrl=f"{settings.API_V1_STR}/sign_in"
 )
 
 def get_current_user(token: str = Depends(oauth2_scheme)
@@ -21,13 +21,12 @@ def get_current_user(token: str = Depends(oauth2_scheme)
         )
         token_data = TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
-
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Could not validate credentials")
     return user.get_one_by_email(email=token_data.sub)
 
 def get_current_active_superuser(
     current_user: User = Depends(get_current_user),
 ) -> User:
     if not current_user.is_superuser:
-        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="The user doesn't have enough privileges")
     return current_user
