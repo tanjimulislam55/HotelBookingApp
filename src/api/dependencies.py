@@ -13,7 +13,7 @@ oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/sign_in"
 )
 
-def get_current_user(token: str = Depends(oauth2_scheme)
+async def get_current_user(token: str = Depends(oauth2_scheme)
 ) -> User:
     try:
         payload = jwt.decode(
@@ -22,7 +22,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)
         token_data = TokenPayload(**payload)
     except (jwt.JWTError, ValidationError):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Could not validate credentials")
-    return user.get_one_by_email(email=token_data.sub)
+    return await user.get_one_by_email(email=token_data.sub)
 
 def get_current_active_superuser(
     current_user: User = Depends(get_current_user),

@@ -2,7 +2,7 @@ from typing import Any, Generic, List, Optional, Type, Union, TypeVar
 from sqlalchemy.orm import Session, declarative_base
 from pydantic import BaseModel
 from datetime import datetime
-from sqlalchemy.sql import select, delete, update
+from sqlalchemy.sql import select, delete, update, insert
 
 from utils.db import database
 
@@ -23,3 +23,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def get_many(self, skip: int, limit: int) -> List[ModelType]:
         query = select(self.model).offset(skip).limit(limit)
         return await database.fetch_one(query)
+    
+    async def create(self, object_in: CreateSchemaType) -> int:
+        query = insert(self.model).values(**object_in.dict())
+        return await database.execute(query)

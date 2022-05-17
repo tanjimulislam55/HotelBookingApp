@@ -11,5 +11,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         query = select(self.model).where(self.model.email == email)
         return await database.fetch_one(query)
 
+    async def get_one_by_username(self, username: str) -> Optional[User]:
+        query = select(self.model).where(self.model.username == username)
+        return await database.fetch_one(query)
+
 
 user = CRUDUser(User)
