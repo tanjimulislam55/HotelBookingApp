@@ -23,6 +23,10 @@ async def get_multiple_users(current_user: User = Depends(get_current_active_sup
 async def get_user_me(current_user: User = Depends(get_current_user)):
     return UJSONResponse(content=current_user, status_code=status.HTTP_200_OK)
 
+@router.put("/{user_id}", response_model=UserOut)
+async def get_a_user(current_user: User = Depends(get_current_active_superuser)):
+    pass
+
 @router.post("/sign_up", response_model=UserOut)
 async def create_new_user(user_in: UserCreate):
     user_info = await user.get_one_by_email(user_in.email)
