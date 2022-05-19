@@ -9,7 +9,7 @@ from settings import settings
 from utils.db import database
 from api.api_v1.routers import api_router
 
-app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json")
+app = FastAPI(title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json", default_response_class=UJSONResponse)
 
 if settings.BACKEND_CORS_ORIGINS:
     app.add_middleware(
@@ -41,7 +41,7 @@ def custom_generic_exception_handler(request: Request, exception: Exception):
 
 @app.get("/")
 async def root():
-    return UJSONResponse(content={"key": "value"})
+    return {"key": "value"}
 
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
