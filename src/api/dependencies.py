@@ -10,7 +10,7 @@ from settings import settings
 from crud.users import user
 
 oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/sign_in"
+    tokenUrl=f"{settings.API_V1_STR}/users/sign_in"
 )
 
 async def get_current_user(token: str = Depends(oauth2_scheme)
