@@ -22,7 +22,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
 
     async def get_many(self, skip: int, limit: int) -> List[ModelType]:
         query = select(self.model).offset(skip).limit(limit)
-        return await database.fetch_one(query)
+        return await database.fetch_all(query)
     
     async def create(self, object_in: CreateSchemaType) -> int:
         query = insert(self.model).values(**object_in.dict())
