@@ -28,3 +28,19 @@ class User(BaseModel):
     password = Column(String(255), nullable=False)
     is_superuser = Column(Boolean, default=False)
 
+class Hotel(BaseModel):
+    __tablename__ = "hotels"
+
+    name = Column(String(100), nullable=False, unique=True, index=True)
+    tax = Column(String())
+    rating_value = Column(Integer)
+    service_charge = Column(String(5))
+
+
+class Address(BaseModel):
+    __tablename__ = "addresses"
+
+    area = Column(String(100))
+    street_address = Column(String(255))
+    city = Column(String(50))
+    country = Column(String(50))
