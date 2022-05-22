@@ -16,7 +16,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
 
-    async def get_one(self, id: str) -> Optional[ModelType]:
+    async def get_one(self, id: int) -> Optional[ModelType]:
         query = select(self.model).where(self.model.id == id)
         return await database.fetch_one(query)
 
@@ -27,3 +27,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def create(self, object_in: CreateSchemaType) -> int:
         query = insert(self.model).values(**object_in.dict())
         return await database.execute(query)
+
+    async def update(self, id: int, payload: UpdateSchemaType) -> None:
+        query = update(self.model).where(self.model.id == id).values(**payload.dict(exclude_unset=True))
+        await database.execute(query)
+
+    async def remove(self, id: int) -> None:
+        query = delete(self.model).where(self.model.id == id)
+        await database.execute(query)

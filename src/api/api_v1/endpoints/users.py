@@ -1,11 +1,10 @@
 from typing import List, Optional
-from fastapi import APIRouter, Depends, status
-from fastapi.responses import UJSONResponse
+from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 
-from schemas import UserOut, UserCreate, UserInDB, Token
+from schemas import UserOut, UserCreate, UserInDB, Token, UserUpdate
 from models import User
 from api.dependencies import get_current_active_superuser, get_current_user
 from crud.users import user
@@ -26,6 +25,20 @@ async def get_user_me(current_user: User = Depends(get_current_user)):
 async def get_a_user(user_id: int, current_user: User = Depends(get_current_active_superuser)):
     return await user.get_one(user_id)
 
+@router.put("/{user_id}", status_code=status.HTTP_202_ACCEPTED)
+async def update_user_me(user_id: int, user_update: UserUpdate, current_user: User = Depends(get_current_user)):
+    if not await user.get_one(user_id):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    await user.update(user_id, user_update)
+    return {**user_update.dict(exclude_unset=True), "id": user_id}
+
+@router.delete("/{user_id}", status_code=status.HTTP_202_ACCEPTED)
+async def remove_user_me(user_id: int, current_user: User = Depends(get_current_active_superuser)):
+    if not await user.get_one(user_id):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    await user.remove(user_id)
+    return {"message": "deleted successfully"}
+
 @router.post("/sign_up", response_model=UserOut, status_code=status.HTTP_201_CREATED)
 async def create_new_user(user_in: UserCreate):
     user_info = await user.get_one_by_email(user_in.email)
@@ -43,7 +56,7 @@ async def create_new_user(user_in: UserCreate):
 @router.post("/sign_in", response_model=Token, status_code=status.HTTP_200_OK)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
     user_info = await user.get_one_by_email(email=form_data.username)
-    if not user_info and not verify_password(form_data.password, user_info.password):
+    if not user_info or not verify_password(form_data.password, user_info.password):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect username or password")
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(user_info.email, access_token_expires)
