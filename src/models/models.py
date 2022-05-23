@@ -62,7 +62,6 @@ class Room(BaseModel):
     child = Column(Integer)
     extra_bed = Column(Integer)
     max_occupancies = Column(Integer)
-    extra_bed = Column(Integer)
     available_room = Column(Integer)
     rate = Column(Integer)
 
@@ -74,3 +73,25 @@ class Image(BaseModel):
     description = Column(String(100))
     source_url = Column(String(250))
     file_name = Column(String(50))
+
+
+class Facility(BaseModel):
+    __tablename__ = "facilities"
+
+    breakfast = Column(Boolean())
+    restaurant = Column(Boolean())
+    parking = Column(Boolean())
+    two_four_security = Column(Boolean())
+    business = Column(Boolean())
+    swimming_pool = Column(Boolean())
+    room_service = Column(Boolean())
+    indoor_games = Column(Boolean())
+    outdoor_activities = Column(Boolean())
+    fitness_centre = Column(Boolean())
+    airport_shuttle = Column(Boolean())
+    early_checkin = Column(Boolean())
+    late_checkout = Column(Boolean())
+    air_conditioning = Column(Boolean())
+    kid_friendly = Column(Boolean())
+    disability_friendly = Column(Boolean())
+    couple_friendly = Column(Boolean())
