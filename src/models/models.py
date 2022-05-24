@@ -1,3 +1,4 @@
+from email.policy import default
 from enum import unique
 from turtle import title
 from sqlalchemy.orm import relationship
@@ -42,7 +43,6 @@ class Hotel(BaseModel):
     rating_value = Column(Integer) # sort/filter key
 
 
-
 class Address(BaseModel):
     __tablename__ = "addresses"
 
@@ -55,15 +55,46 @@ class Address(BaseModel):
 class Room(BaseModel):
     __tablename__ = "rooms"
 
-    hotel_board_type_name = Column(String(50)) # Break and Breakfast
-    board_code = Column(String(5)) # BB
-    description = Column(String()) # Breakfast Included
     adult = Column(Integer)
     child = Column(Integer)
     extra_bed = Column(Integer)
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
     rate = Column(Integer)
+
+
+class BoardType(BaseModel):
+    __tablename__ = "boards_types"
+
+    name = Column(String(50)) # Break and Breakfast
+    code = Column(String(5)) # BB
+    description = Column(String()) # Breakfast Included
+
+
+class Amenity(BaseModel):
+    __tablename__ = "amenties"
+
+    
+
+class Facility(BaseModel):
+    __tablename__ = "facilities"
+
+    breakfast = Column(Boolean, default=False)
+    restaurant = Column(Boolean, default=False)
+    parking = Column(Boolean, default=False)
+    two_four_security = Column(Boolean, default=False)
+    business = Column(Boolean, default=False)
+    swimming_pool = Column(Boolean, default=False)
+    room_service = Column(Boolean, default=False)
+    indoor_games = Column(Boolean, default=False)
+    outdoor_activities = Column(Boolean, default=False)
+    fitness_centre = Column(Boolean, default=False)
+    airport_shuttle = Column(Boolean, default=False)
+    early_checkin = Column(Boolean, default=False)
+    late_checkout = Column(Boolean, default=False)
+    air_conditioning = Column(Boolean, default=False)
+    kid_friendly = Column(Boolean, default=False)
+    disability_friendly = Column(Boolean, default=False)
 
 
 class Image(BaseModel):
@@ -74,24 +105,4 @@ class Image(BaseModel):
     source_url = Column(String(250))
     file_name = Column(String(50))
 
-
-class Facility(BaseModel):
-    __tablename__ = "facilities"
-
-    breakfast = Column(Boolean())
-    restaurant = Column(Boolean())
-    parking = Column(Boolean())
-    two_four_security = Column(Boolean())
-    business = Column(Boolean())
-    swimming_pool = Column(Boolean())
-    room_service = Column(Boolean())
-    indoor_games = Column(Boolean())
-    outdoor_activities = Column(Boolean())
-    fitness_centre = Column(Boolean())
-    airport_shuttle = Column(Boolean())
-    early_checkin = Column(Boolean())
-    late_checkout = Column(Boolean())
-    air_conditioning = Column(Boolean())
-    kid_friendly = Column(Boolean())
-    disability_friendly = Column(Boolean())
-    couple_friendly = Column(Boolean())
+    couple_friendly = Column(Boolean, default=False)
