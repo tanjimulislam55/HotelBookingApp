@@ -1,6 +1,3 @@
-from email.policy import default
-from enum import unique
-from turtle import title
 from sqlalchemy.orm import relationship
 from sqlalchemy import (
     Column,
@@ -43,6 +40,35 @@ class Hotel(BaseModel):
     rating_value = Column(Integer) # sort/filter key
 
 
+class FacilityGroup(BaseModel):
+    __tablename__ = "facility_group"
+
+    breakfast = Column(Boolean, default=False)
+    restaurant = Column(Boolean, default=False)
+    parking = Column(Boolean, default=False)
+    two_four_security = Column(Boolean, default=False)
+    business = Column(Boolean, default=False)
+    swimming_pool = Column(Boolean, default=False)
+    room_service = Column(Boolean, default=False)
+    indoor_games = Column(Boolean, default=False)
+    outdoor_activities = Column(Boolean, default=False)
+    fitness_centre = Column(Boolean, default=False)
+    airport_shuttle = Column(Boolean, default=False)
+    early_checkin = Column(Boolean, default=False)
+    late_checkout = Column(Boolean, default=False)
+    air_conditioning = Column(Boolean, default=False)
+    kid_friendly = Column(Boolean, default=False)
+    couple_friendly = Column(Boolean, default=False)
+    disability_friendly = Column(Boolean, default=False)
+
+
+class Facility(BaseModel):
+    __tablename__ = "facilities"
+
+    name = Column(String(20))
+    tag = Column(String(20))
+
+
 class Address(BaseModel):
     __tablename__ = "addresses"
 
@@ -60,7 +86,7 @@ class Room(BaseModel):
     extra_bed = Column(Integer)
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
-    rate = Column(Integer)
+    rate = Column(Integer) # sort/filter key
 
 
 class BoardType(BaseModel):
@@ -74,27 +100,35 @@ class BoardType(BaseModel):
 class Amenity(BaseModel):
     __tablename__ = "amenties"
 
-    
-
-class Facility(BaseModel):
-    __tablename__ = "facilities"
-
-    breakfast = Column(Boolean, default=False)
-    restaurant = Column(Boolean, default=False)
-    parking = Column(Boolean, default=False)
-    two_four_security = Column(Boolean, default=False)
-    business = Column(Boolean, default=False)
-    swimming_pool = Column(Boolean, default=False)
-    room_service = Column(Boolean, default=False)
-    indoor_games = Column(Boolean, default=False)
-    outdoor_activities = Column(Boolean, default=False)
-    fitness_centre = Column(Boolean, default=False)
-    airport_shuttle = Column(Boolean, default=False)
-    early_checkin = Column(Boolean, default=False)
-    late_checkout = Column(Boolean, default=False)
     air_conditioning = Column(Boolean, default=False)
-    kid_friendly = Column(Boolean, default=False)
+    balcony = Column(Boolean, default=False)
+    bathtub = Column(Boolean, default=False)
+    ceiling_fan = Column(Boolean, default=False)
+    clothes_dryer = Column(Boolean, default=False)
+    connecting_rooms = Column(Boolean, default=False)
+    cooker = Column(Boolean, default=False)
+    dining_area = Column(Boolean, default=False)
     disability_friendly = Column(Boolean, default=False)
+    electric_kettle = Column(Boolean, default=False)
+    garden_view = Column(Boolean, default=False)
+    hairdryer = Column(Boolean, default=False)
+    hot_water = Column(Boolean, default=False)
+    ironing_set = Column(Boolean, default=False)
+    kitchenette = Column(Boolean, default=False)
+    microwave_oven = Column(Boolean, default=False)
+    minibar = Column(Boolean, default=False)
+    mountain_or_hill_view = Column(Boolean, default=False)
+    non_smoking_room = Column(Boolean, default=False)
+    pool_view = Column(Boolean, default=False)
+    power_outlet = Column(Boolean, default=False)
+    private_beach = Column(Boolean, default=False)
+    safe_or_locker = Column(Boolean, default=False)
+    smoking_room = Column(Boolean, default=False)
+    tea_and_offee = Column(Boolean, default=False)
+    telephone = Column(Boolean, default=False)
+    toiletries = Column(Boolean, default=False)
+    tv = Column(Boolean, default=False)
+    wifi = Column(Boolean, default=False)
 
 
 class Image(BaseModel):
@@ -104,5 +138,3 @@ class Image(BaseModel):
     description = Column(String(100))
     source_url = Column(String(250))
     file_name = Column(String(50))
-
-    couple_friendly = Column(Boolean, default=False)
