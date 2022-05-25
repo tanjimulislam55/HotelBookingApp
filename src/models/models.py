@@ -32,12 +32,16 @@ class Hotel(BaseModel):
     __tablename__ = "hotels"
 
     name = Column(String(100), nullable=False, unique=True, index=True)
-    tax = Column(String(5))
-    service_charge = Column(String(5))
+    tax = Column(Integer)
+    service_charge = Column(Integer)
     partnership_discount = Column(Float)
     discount_promo_code = Column(String(20))
     discount_description = Column(String(150))
-    rating_value = Column(Integer) # sort/filter key
+    rating_value = Column(Float)  # sort/filter key
+
+    facility_group = relationship("FacilityGroup", back_populates="hotel")
+    address = relationship("Address", back_populates="hotel")
+    rooms = relationship("Room", back_populates="hotel")
 
 
 class FacilityGroup(BaseModel):
@@ -60,6 +64,9 @@ class FacilityGroup(BaseModel):
     kid_friendly = Column(Boolean, default=False)
     couple_friendly = Column(Boolean, default=False)
     disability_friendly = Column(Boolean, default=False)
+    hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"))
+
+    hotel = relationship("Hotel", back_populates="facility_group")
 
 
 class Facility(BaseModel):
@@ -76,6 +83,19 @@ class Address(BaseModel):
     street_address = Column(String(255))
     city = Column(String(50))
     country = Column(String(50))
+    hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"))
+
+    hotel = relationship("Hotel", back_populates="address")
+
+
+class BoardType(BaseModel):
+    __tablename__ = "board_types"
+
+    name = Column(String(50))  # Break and Breakfast
+    code = Column(String(5))  # BB
+    description = Column(String())  # Breakfast Included
+
+    rooms = relationship("Room", back_populates="board_type")
 
 
 class Room(BaseModel):
@@ -86,19 +106,18 @@ class Room(BaseModel):
     extra_bed = Column(Integer)
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
-    rate = Column(Integer) # sort/filter key
+    rate = Column(Integer)  # sort/filter key
+    board_type_id = Column(ForeignKey("board_types.id", ondelete="SET_NULL"))
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
-
-class BoardType(BaseModel):
-    __tablename__ = "boards_types"
-
-    name = Column(String(50)) # Break and Breakfast
-    code = Column(String(5)) # BB
-    description = Column(String()) # Breakfast Included
+    board_type = relationship("BoardType", back_populates="rooms")
+    amenity = relationship("Amenity", back_populates="room")
+    images = relationship("Image", back_populates="room")
+    hotel = relationship("Hotel", back_populates="rooms")
 
 
 class Amenity(BaseModel):
-    __tablename__ = "amenties"
+    __tablename__ = "amenities"
 
     air_conditioning = Column(Boolean, default=False)
     balcony = Column(Boolean, default=False)
@@ -129,6 +148,9 @@ class Amenity(BaseModel):
     toiletries = Column(Boolean, default=False)
     tv = Column(Boolean, default=False)
     wifi = Column(Boolean, default=False)
+    room_id = Column(Integer, ForeignKey("rooms.id", ondelete="CASCADE"))
+
+    room = relationship("Room", back_populates="amenity")
 
 
 class Image(BaseModel):
@@ -138,3 +160,6 @@ class Image(BaseModel):
     description = Column(String(100))
     source_url = Column(String(250))
     file_name = Column(String(50))
+    room_id = Column(Integer, ForeignKey("rooms.id", ondelete="CASCADE"))
+
+    room = relationship("Room", back_populates="images")
