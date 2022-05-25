@@ -12,6 +12,7 @@ ModelType = TypeVar("ModelType", bound=Base)
 CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
+
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
@@ -23,13 +24,17 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     async def get_many(self, skip: int, limit: int) -> List[ModelType]:
         query = select(self.model).offset(skip).limit(limit)
         return await database.fetch_all(query)
-    
+
     async def create(self, object_in: CreateSchemaType) -> int:
         query = insert(self.model).values(**object_in.dict())
         return await database.execute(query)
 
     async def update(self, id: int, payload: UpdateSchemaType) -> None:
-        query = update(self.model).where(self.model.id == id).values(**payload.dict(exclude_unset=True))
+        query = (
+            update(self.model)
+            .where(self.model.id == id)
+            .values(**payload.dict(exclude_unset=True))
+        )
         await database.execute(query)
 
     async def remove(self, id: int) -> None:

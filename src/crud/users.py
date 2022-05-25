@@ -6,6 +6,7 @@ from models import User
 from .base import CRUDBase
 from utils.db import database
 
+
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def get_one_by_email(self, email: str) -> Optional[User]:
         query = select(self.model).where(self.model.email == email)
