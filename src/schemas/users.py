@@ -3,7 +3,6 @@ from pydantic.types import constr
 from typing import Optional
 
 
-
 class UserBase(BaseModel):
     username: str
     first_name: str
