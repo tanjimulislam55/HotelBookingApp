@@ -2,17 +2,7 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class HotelCreate(BaseModel):
-    name: str
-    tax: Optional[int] = 0
-    service_charge: Optional[int] = 0
-    partnership_discount: Optional[float] = 0
-    discount_promo_code: Optional[str]
-    discount_description: Optional[str]
-    rating_value: Optional[float] = 0
-
-
-class FacilityGroupCreate(BaseModel):
+class FacilityGroupBase(BaseModel):
     breakfast: Optional[bool] = False
     restaurant: Optional[bool] = False
     parking: Optional[bool] = False
@@ -30,4 +20,32 @@ class FacilityGroupCreate(BaseModel):
     kid_friendly: Optional[bool] = False
     couple_friendly: Optional[bool] = False
     disability_friendly: Optional[bool] = False
+
+
+class FacilityGroupCreate(FacilityGroupBase):
     hotel_id: int
+
+
+class HotelCreate(BaseModel):
+    name: str
+    tax: Optional[int] = 0
+    service_charge: Optional[int] = 0
+    partnership_discount: Optional[float] = 0
+    discount_promo_code: Optional[str]
+    discount_description: Optional[str]
+    rating_value: Optional[float] = 0
+    facility_group: FacilityGroupCreate
+
+
+class HotelUpdate(BaseModel):
+    name: Optional[str]
+    tax: Optional[int]
+    service_charge: Optional[int]
+    partnership_discount: Optional[float]
+    discount_promo_code: Optional[str]
+    discount_description: Optional[str]
+    rating_value: Optional[float]
+
+
+class FacilityGroupUpdate(FacilityGroupBase):
+    pass

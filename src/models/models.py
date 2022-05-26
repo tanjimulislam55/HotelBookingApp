@@ -107,7 +107,7 @@ class Room(BaseModel):
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
     rate = Column(Integer)  # sort/filter key
-    board_type_id = Column(ForeignKey("board_types.id", ondelete="SET_NULL"))
+    board_type_id = Column(ForeignKey("board_types.id", ondelete="SET NULL"))
     hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
     board_type = relationship("BoardType", back_populates="rooms")
@@ -133,7 +133,7 @@ class Amenity(BaseModel):
     hairdryer = Column(Boolean, default=False)
     hot_water = Column(Boolean, default=False)
     ironing_set = Column(Boolean, default=False)
-    kitchenette = Column(Boolean, default=False)
+    kitchenete = Column(Boolean, default=False)
     microwave_oven = Column(Boolean, default=False)
     minibar = Column(Boolean, default=False)
     mountain_or_hill_view = Column(Boolean, default=False)
