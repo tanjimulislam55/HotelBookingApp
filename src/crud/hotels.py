@@ -6,8 +6,10 @@ from schemas.hotels import (
     HotelUpdate,
     FacilityGroupCreate,
     FacilityGroupUpdate,
+    AddressCreate,
+    AddressUpdate,
 )
-from models import Hotel, FacilityGroup
+from models import Hotel, FacilityGroup, Address
 from .base import CRUDBase
 from utils.db import database
 
@@ -27,8 +29,9 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
 
     async def get_many(self, skip: int, limit: int) -> List[Hotel]:
         query = (
-            select(Hotel, FacilityGroup)
-            .join(FacilityGroup, FacilityGroup.hotel_id == Hotel.id)
+            select(Hotel, FacilityGroup, Address)
+            .join(FacilityGroup, FacilityGroup.hotel_id == Hotel.id, isouter=True)
+            .join(Address, Address.hotel_id == Hotel.id, isouter=True)
             .offset(skip)
             .limit(limit)
         )
@@ -47,3 +50,10 @@ class CRUDFacilityGroup(
 
 
 facility_group = CRUDFacilityGroup(FacilityGroup)
+
+
+class CRUDAddress(CRUDBase[Address, AddressCreate, AddressUpdate]):
+    pass
+
+
+address = CRUDAddress(Address)
