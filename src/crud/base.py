@@ -1,7 +1,6 @@
-from typing import Any, Generic, List, Optional, Type, Union, TypeVar
-from sqlalchemy.orm import Session, declarative_base
+from typing import Generic, List, Optional, Type, TypeVar
+from sqlalchemy.orm import declarative_base
 from pydantic import BaseModel
-from datetime import datetime
 from sqlalchemy.sql import select, delete, update, insert
 
 from utils.db import database

@@ -26,7 +26,11 @@ class FacilityGroupCreate(FacilityGroupBase):
     hotel_id: int
 
 
-class HotelCreate(BaseModel):
+class FacilityGroupUpdate(FacilityGroupBase):
+    pass
+
+
+class HotelBase(BaseModel):
     name: str
     tax: Optional[int] = 0
     service_charge: Optional[int] = 0
@@ -34,7 +38,10 @@ class HotelCreate(BaseModel):
     discount_promo_code: Optional[str]
     discount_description: Optional[str]
     rating_value: Optional[float] = 0
-    facility_group: FacilityGroupCreate
+
+
+class HotelCreate(HotelBase):
+    facility_group: FacilityGroupBase
 
 
 class HotelUpdate(BaseModel):
@@ -47,5 +54,8 @@ class HotelUpdate(BaseModel):
     rating_value: Optional[float]
 
 
-class FacilityGroupUpdate(FacilityGroupBase):
-    pass
+class HotelOut(HotelBase, FacilityGroupBase):
+    id: int
+
+    class Config:
+        orm_mode = True
