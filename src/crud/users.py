@@ -9,11 +9,11 @@ from utils.db import database
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     async def get_one_by_email(self, email: str) -> Optional[User]:
-        query = select(self.model).where(self.model.email == email)
+        query = select(User).where(User.email == email)
         return await database.fetch_one(query)
 
     async def get_one_by_username(self, username: str) -> Optional[User]:
-        query = select(self.model).where(self.model.username == username)
+        query = select(User).where(User.username == username)
         return await database.fetch_one(query)
 
 
