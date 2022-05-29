@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional
 from sqlalchemy import select
 
 from schemas.hotels import (
@@ -19,17 +19,6 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
         query = select(Hotel).where(Hotel.name == name)
         return await database.fetch_one(query)
 
-    async def get_one(self, id: int) -> Optional[Hotel]:
-        query = select(Hotel).where(Hotel.id == id)
-        return await database.fetch_one(query)
-
-    async def get_many(self, skip: int, limit: int) -> List[Hotel]:
-        query = select(Hotel).offset(skip).limit(limit)
-        return await database.fetch_all(query)
-
-
-hotel = CRUDHotel(Hotel)
-
 
 class CRUDFacilityGroup(
     CRUDBase[FacilityGroup, FacilityGroupCreate, FacilityGroupUpdate]
@@ -39,11 +28,10 @@ class CRUDFacilityGroup(
         return await database.fetch_one(query)
 
 
-facility_group = CRUDFacilityGroup(FacilityGroup)
-
-
 class CRUDAddress(CRUDBase[Address, AddressCreate, AddressUpdate]):
     pass
 
 
+hotel = CRUDHotel(Hotel)
+facility_group = CRUDFacilityGroup(FacilityGroup)
 address = CRUDAddress(Address)
