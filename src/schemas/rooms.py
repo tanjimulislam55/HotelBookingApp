@@ -1,61 +1,73 @@
-# from pydantic import BaseModel
-# from typing import Optional
+from pydantic import BaseModel
+from typing import Optional
 
 
-# class FacilityGroupBase(BaseModel):
-#     breakfast: Optional[bool] = False
-#     restaurant: Optional[bool] = False
-#     parking: Optional[bool] = False
-#     two_four_security: Optional[bool] = False
-#     business: Optional[bool] = False
-#     swimming_pool: Optional[bool] = False
-#     room_service: Optional[bool] = False
-#     indoor_games: Optional[bool] = False
-#     outdoor_activities: Optional[bool] = False
-#     fitness_centre: Optional[bool] = False
-#     airport_shuttle: Optional[bool] = False
-#     early_checkin: Optional[bool] = False
-#     late_checkout: Optional[bool] = False
-#     air_conditioning: Optional[bool] = False
-#     kid_friendly: Optional[bool] = False
-#     couple_friendly: Optional[bool] = False
-#     disability_friendly: Optional[bool] = False
+class RoomBase(BaseModel):
+    adult: Optional[int] = 0
+    child: Optional[int] = 0
+    extra_bed: Optional[int] = 0
+    max_occupancies: Optional[int] = 0
+    available_room: Optional[int] = 0
+    rate: Optional[int] = 0
 
 
-# class FacilityGroupCreate(FacilityGroupBase):
-#     hotel_id: int
+class RoomCreate(RoomBase):
+    hotel_id: int
+    board_type_id: int
 
 
-# class FacilityGroupUpdate(FacilityGroupBase):
-#     pass
+class RoomUpdate(RoomBase):
+    pass
 
 
-# class HotelBase(BaseModel):
-#     name: str
-#     tax: Optional[int] = 0
-#     service_charge: Optional[int] = 0
-#     partnership_discount: Optional[float] = 0
-#     discount_promo_code: Optional[str]
-#     discount_description: Optional[str]
-#     rating_value: Optional[float] = 0
+class AmenityBase(BaseModel):
+    air_conditioning: Optional[bool] = False
+    balcony: Optional[bool] = False
+    bathtub: Optional[bool] = False
+    ceiling_fan: Optional[bool] = False
+    clothes_dryer: Optional[bool] = False
+    connecting_rooms: Optional[bool] = False
+    cooker: Optional[bool] = False
+    dining_area: Optional[bool] = False
+    disability_friendly: Optional[bool] = False
+    electric_kettle: Optional[bool] = False
+    garden_view: Optional[bool] = False
+    hairdryer: Optional[bool] = False
+    hot_water: Optional[bool] = False
+    ironing_set: Optional[bool] = False
+    kitchenete: Optional[bool] = False
+    microwave_oven: Optional[bool] = False
+    minibar: Optional[bool] = False
+    mountain_or_hill_view: Optional[bool] = False
+    non_smoking_room: Optional[bool] = False
+    pool_view: Optional[bool] = False
+    power_outlet: Optional[bool] = False
+    private_beach: Optional[bool] = False
+    safe_or_locker: Optional[bool] = False
+    smoking_room: Optional[bool] = False
+    tea_and_offee: Optional[bool] = False
+    telephone: Optional[bool] = False
+    toiletries: Optional[bool] = False
+    tv: Optional[bool] = False
+    wifi: Optional[bool] = False
 
 
-# class HotelCreate(HotelBase):
-#     facility_group: FacilityGroupBase
+class AmenityCreate(AmenityBase):
+    room_id: int
 
 
-# class HotelUpdate(BaseModel):
-#     name: Optional[str]
-#     tax: Optional[int]
-#     service_charge: Optional[int]
-#     partnership_discount: Optional[float]
-#     discount_promo_code: Optional[str]
-#     discount_description: Optional[str]
-#     rating_value: Optional[float]
+class AmenityUpdate(AmenityBase):
+    pass
 
 
-# class HotelOut(HotelBase, FacilityGroupBase):
-#     id: int
+class ImageBase(BaseModel):
+    pass
 
-#     class Config:
-#         orm_mode = True
+
+class RoomOut(
+    AmenityBase,
+):
+    id: int
+
+    class Config:
+        orm_mode = True
