@@ -2,7 +2,14 @@ from typing import List
 from fastapi import APIRouter, Depends, status
 from fastapi.exceptions import HTTPException
 
-from schemas import HotelCreate, FacilityGroupCreate, HotelOut, AddressCreate
+from schemas import (
+    HotelCreate,
+    FacilityGroupCreate,
+    HotelOut,
+    AddressCreate,
+    FacilityGroupOut,
+    AddressOut,
+)
 from models import User
 from api.dependencies import get_current_active_superuser
 from crud.hotels import hotel, facility_group, address
@@ -15,20 +22,25 @@ async def get_multiple_hotels(
     skip: int = 0,
     limit: int = 10,
 ):
-    return await hotel.get_many(skip, limit)
+    hotels = await hotel.get_many(skip, limit)
+    return [
+        {
+            **HotelOut(**hotel_info).dict(),
+            "facility_group": FacilityGroupOut(**hotel_info),
+            "address": AddressOut(**hotel_info),
+        }
+        for hotel_info in hotels
+    ]
 
 
 @router.get("/{hotel_id}", response_model=HotelOut, status_code=status.HTTP_200_OK)
 async def get_a_hotel(hotel_id: int):
-    # hotel_info = await hotel.get_one(hotel_id)
-    # facility_group_info = await facility_group.get_one_by_hotel_id(
-    #     hotel_info.id
-    # )
-    # return {
-    #     **jsonable_encoder(hotel_info),
-    #     "facility_group": jsonable_encoder(facility_group_info),
-    # }
-    return await hotel.get_one(hotel_id)
+    hotel_info = await hotel.get_one(hotel_id)
+    return {
+        **HotelOut(**hotel_info).dict(),
+        "facility_group": FacilityGroupOut(**hotel_info),
+        "address": AddressOut(**hotel_info),
+    }
 
 
 @router.post("/", response_model=HotelOut, status_code=status.HTTP_201_CREATED)

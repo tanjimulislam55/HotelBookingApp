@@ -20,21 +20,11 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
         return await database.fetch_one(query)
 
     async def get_one(self, id: int) -> Optional[Hotel]:
-        query = (
-            select(Hotel, FacilityGroup)
-            .join(FacilityGroup, FacilityGroup.hotel_id == Hotel.id)
-            .where(Hotel.id == id)
-        )
+        query = select(Hotel).where(Hotel.id == id)
         return await database.fetch_one(query)
 
     async def get_many(self, skip: int, limit: int) -> List[Hotel]:
-        query = (
-            select(Hotel, FacilityGroup, Address)
-            .join(FacilityGroup, FacilityGroup.hotel_id == Hotel.id, isouter=True)
-            .join(Address, Address.hotel_id == Hotel.id, isouter=True)
-            .offset(skip)
-            .limit(limit)
-        )
+        query = select(Hotel).offset(skip).limit(limit)
         return await database.fetch_all(query)
 
 

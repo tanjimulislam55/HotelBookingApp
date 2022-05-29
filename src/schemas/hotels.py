@@ -30,6 +30,14 @@ class FacilityGroupUpdate(FacilityGroupBase):
     pass
 
 
+class FacilityGroupOut(FacilityGroupBase):
+    id: int
+    hotel_id: int
+
+    class Config:
+        orm_mode = True
+
+
 class AddressBase(BaseModel):
     area: Optional[str]
     street_address: Optional[str]
@@ -43,6 +51,14 @@ class AddressCreate(AddressBase):
 
 class AddressUpdate(AddressBase):
     pass
+
+
+class AddressOut(AddressBase):
+    id: int
+    hotel_id: int
+
+    class Config:
+        orm_mode = True
 
 
 class HotelBase(BaseModel):
@@ -70,8 +86,10 @@ class HotelUpdate(BaseModel):
     rating_value: Optional[float]
 
 
-class HotelOut(HotelBase, FacilityGroupBase, AddressBase):
+class HotelOut(HotelBase):
     id: int
+    facility_group: Optional[FacilityGroupOut] = None
+    address: Optional[AddressOut] = None
 
     class Config:
         orm_mode = True
