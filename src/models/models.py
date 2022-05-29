@@ -89,8 +89,10 @@ class Address(BaseModel):
 class BoardType(BaseModel):
     __tablename__ = "board_types"
 
-    name = Column(String(50))  # Break and Breakfast
-    code = Column(String(5))  # BB
+    name = Column(
+        String(50), nullable=False, unique=True, index=True
+    )  # Break and Breakfast
+    code = Column(String(5), nullable=False)  # BB
     description = Column(String())  # Breakfast Included
 
     rooms = relationship("Room", back_populates="board_type")
@@ -108,9 +110,9 @@ class Room(BaseModel):
     board_type_id = Column(ForeignKey("board_types.id", ondelete="SET NULL"))
     hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
+    amenity = relationship("Amenity", back_populates="room", lazy="joined")
+    images = relationship("Image", back_populates="room", lazy="joined")
     board_type = relationship("BoardType", back_populates="rooms")
-    amenity = relationship("Amenity", back_populates="room")
-    images = relationship("Image", back_populates="room")
     hotel = relationship("Hotel", back_populates="rooms")
 
 
