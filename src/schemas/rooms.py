@@ -61,7 +61,10 @@ class AmenityUpdate(AmenityBase):
 
 
 class ImageBase(BaseModel):
-    pass
+    title: Optional[str]
+    description: Optional[str]
+    source_url: Optional[str]
+    file_name: Optional[str]
 
 
 class RoomOut(
