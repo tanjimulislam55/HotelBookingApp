@@ -4,12 +4,8 @@ from sqlalchemy import (
     Float,
     Integer,
     String,
-    Text,
     Boolean,
-    Date,
-    DateTime,
     ForeignKey,
-    Enum,
 )
 
 from .base import BaseModel
@@ -39,8 +35,10 @@ class Hotel(BaseModel):
     discount_description = Column(String(150))
     rating_value = Column(Float)  # sort/filter key
 
-    facility_group = relationship("FacilityGroup", back_populates="hotel")
-    address = relationship("Address", back_populates="hotel")
+    facility_group = relationship(
+        "FacilityGroup", back_populates="hotel", lazy="joined"
+    )
+    address = relationship("Address", back_populates="hotel", lazy="joined")
     rooms = relationship("Room", back_populates="hotel")
 
 
