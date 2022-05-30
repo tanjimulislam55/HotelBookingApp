@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
+from fastapi import File, UploadFile
 
 
 class RoomBase(BaseModel):
@@ -65,6 +66,25 @@ class ImageBase(BaseModel):
     description: Optional[str]
     source_url: Optional[str]
     file_name: Optional[str]
+
+
+class ImageCreate(ImageBase):
+    @classmethod
+    def as_form(
+        cls,
+        title: Optional[str],
+        description: Optional[str],
+        source_url: Optional[str],
+        file_name: Optional[str],
+        file: UploadFile = File(...),
+    ):
+        return cls(
+            title=title,
+            description=description,
+            source_url=source_url,
+            file_name=file_name,
+            file=file,
+        )
 
 
 class RoomOut(
