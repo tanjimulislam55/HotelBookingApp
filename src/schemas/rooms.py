@@ -63,9 +63,10 @@ class AmenityOut(AmenityCreate):
 
 
 class RoomOut(
-    AmenityBase,
+    RoomBase,
 ):
     id: int
+    amenity: Optional[AmenityOut] = None
 
     class Config:
         orm_mode = True
