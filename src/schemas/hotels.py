@@ -30,9 +30,8 @@ class FacilityGroupUpdate(FacilityGroupBase):
     pass
 
 
-class FacilityGroupOut(FacilityGroupBase):
+class FacilityGroupOut(FacilityGroupCreate):
     id: int
-    hotel_id: int
 
     class Config:
         orm_mode = True
@@ -53,9 +52,8 @@ class AddressUpdate(AddressBase):
     pass
 
 
-class AddressOut(AddressBase):
+class AddressOut(AddressCreate):
     id: int
-    hotel_id: int
 
     class Config:
         orm_mode = True
