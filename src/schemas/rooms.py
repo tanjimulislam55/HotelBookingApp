@@ -1,6 +1,5 @@
 from pydantic import BaseModel
 from typing import Optional
-from fastapi import File, UploadFile
 
 
 class RoomBase(BaseModel):
@@ -10,11 +9,6 @@ class RoomBase(BaseModel):
     max_occupancies: Optional[int] = 0
     available_room: Optional[int] = 0
     rate: Optional[int] = 0
-
-
-class RoomCreate(RoomBase):
-    hotel_id: int
-    board_type_id: int
 
 
 class RoomUpdate(RoomBase):
@@ -61,30 +55,11 @@ class AmenityUpdate(AmenityBase):
     pass
 
 
-class ImageBase(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    source_url: Optional[str]
-    file_name: Optional[str]
+class AmenityOut(AmenityCreate):
+    id: int
 
-
-class ImageCreate(ImageBase):
-    @classmethod
-    def as_form(
-        cls,
-        title: Optional[str],
-        description: Optional[str],
-        source_url: Optional[str],
-        file_name: Optional[str],
-        file: UploadFile = File(...),
-    ):
-        return cls(
-            title=title,
-            description=description,
-            source_url=source_url,
-            file_name=file_name,
-            file=file,
-        )
+    class Config:
+        orm_mode = True
 
 
 class RoomOut(
@@ -94,3 +69,9 @@ class RoomOut(
 
     class Config:
         orm_mode = True
+
+
+class RoomCreate(RoomBase):
+    hotel_id: int
+    board_type_id: int
+    amenity: AmenityBase
