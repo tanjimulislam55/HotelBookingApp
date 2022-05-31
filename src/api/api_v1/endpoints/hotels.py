@@ -44,9 +44,7 @@ async def get_a_hotel(hotel_id: int):
 
 
 @router.post("/", response_model=HotelOut, status_code=status.HTTP_201_CREATED)
-async def create_new_hotel(
-    hotel_in: HotelCreate, current_user: User = Depends(get_current_active_superuser)
-):
+async def create_new_hotel(hotel_in: HotelCreate):
     hotel_info = await hotel.get_one_by_name(hotel_in.name)
     if hotel_info:
         raise HTTPException(
@@ -61,13 +59,17 @@ async def create_new_hotel(
     address_dict = hotel_in.address.dict()
     address_dict.update({"hotel_id": new_generated_hotel_id})
     try:
-        await facility_group.create(FacilityGroupCreate(**facility_group_dict))
-        await address.create(AddressCreate(**address_dict))
+        new_generated_facility_group_id = await facility_group.create(
+            FacilityGroupCreate(**facility_group_dict)
+        )
+        new_generated_address_id = await address.create(AddressCreate(**address_dict))
         return {
             "id": new_generated_hotel_id,
             **hotel_dict,
-            **facility_group_dict,
-            **address_dict,
+            "facility_group": FacilityGroupOut(
+                **facility_group_dict, id=new_generated_facility_group_id
+            ),
+            "address": AddressOut(**address_dict, id=new_generated_address_id),
         }
     except NotImplementedError:
         await hotel.remove(new_generated_hotel_id)
