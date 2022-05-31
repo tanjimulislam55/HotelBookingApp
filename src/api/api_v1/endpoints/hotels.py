@@ -1,5 +1,5 @@
 from typing import List
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
 
 from schemas import (
@@ -76,3 +76,13 @@ async def create_new_hotel(hotel_in: HotelCreate):
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Could not create."
         )
+
+
+@router.delete("/{hotel_id}", status_code=status.HTTP_202_ACCEPTED)
+async def remove_a_hotel(
+    hotel_id: int, current_user: User = Depends(get_current_active_superuser)
+):
+    if not await hotel.get_one(hotel_id):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    await hotel.remove(hotel_id)
+    return {"message": "deleted successfully"}

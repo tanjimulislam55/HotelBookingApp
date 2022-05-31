@@ -53,3 +53,13 @@ async def update_board_type(
         return Response(status_code=status.HTTP_204_NO_CONTENT)
     await board_type.update(board_type_id, board_type_update)
     return {**board_type_update.dict(exclude_unset=True), "id": board_type_id}
+
+
+@router.delete("/{board_type_id}", status_code=status.HTTP_202_ACCEPTED)
+async def remove_a_board_type(
+    board_type_id: int, current_user: User = Depends(get_current_active_superuser)
+):
+    if not await board_type.get_one(board_type_id):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    await board_type.remove(board_type_id)
+    return {"message": "deleted successfully"}

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
 from typing import List
 
@@ -43,3 +43,13 @@ async def create_new_room(room_in: RoomCreate):
         raise HTTPException(
             status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Could not create."
         )
+
+
+@router.delete("/{room_id}", status_code=status.HTTP_202_ACCEPTED)
+async def remove_a_room(
+    room_id: int, current_user: User = Depends(get_current_active_superuser)
+):
+    if not await room.get_one(room_id):
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+    await room.remove(room_id)
+    return {"message": "deleted successfully"}
