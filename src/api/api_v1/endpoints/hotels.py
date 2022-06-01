@@ -10,6 +10,8 @@ from schemas import (
     AddressCreate,
     FacilityGroupOut,
     AddressOut,
+    RoomOut,
+    AmenityOut,
 )
 from models import User
 from api.dependencies import get_current_active_superuser
@@ -20,15 +22,15 @@ router = APIRouter()
 
 @router.get("/search/list", status_code=status.HTTP_200_OK)
 async def search_hotels(
-    city: Optional[str] = None,
-    area: Optional[str] = None,
-    is_booked: Optional[bool] = False,
-    adult: Optional[int] = 2,
-    child: Optional[int] = 1,
-    max_occupancies: Optional[int] = 4,
-    min_rate: Optional[int] = 0,
-    max_rate: Optional[int] = 10000,
-    rating_value: Optional[int] = 3,
+    city: str,
+    area: str,
+    is_booked: bool = False,
+    adult: int = 2,
+    child: int = 1,
+    max_occupancies: int = 4,
+    min_rate: int = 0,
+    max_rate: int = 10000,
+    rating_value: int = 3,
     skip: int = 0,
     limit: int = 10,
 ):
@@ -46,6 +48,18 @@ async def search_hotels(
         max_rate,
     )
     return hotels
+    return [
+        {
+            **HotelOut(**hotel_info).dict(),
+            "facility_group": FacilityGroupOut(**hotel_info),
+            "address": AddressOut(**hotel_info),
+            "rooms": {
+                **RoomOut(**hotel_info).dict(),
+                "amenity": AmenityOut(**hotel_info),
+            },
+        }
+        for hotel_info in hotels
+    ]
 
 
 @router.get("/", response_model=List[HotelOut], status_code=status.HTTP_200_OK)

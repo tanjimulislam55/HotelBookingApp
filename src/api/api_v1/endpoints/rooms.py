@@ -55,7 +55,7 @@ async def create_new_room(room_in: RoomCreate):
     new_generated_room_id = await room.create(room_in.copy(exclude={"amenity"}))
     room_dict = room_in.copy(exclude={"amenity"}).dict()
     amenity_dict = room_in.amenity.dict()
-    amenity_dict.update({"room_id": new_generated_room_id})
+    amenity_dict.update({"room_id": new_generated_room_id, "is_booked": False})
     try:
         new_generated_amenity_id = await amenity.create(AmenityCreate(**amenity_dict))
         return {

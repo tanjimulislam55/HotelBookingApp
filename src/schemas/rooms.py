@@ -79,5 +79,6 @@ class RoomOut(
 
 class RoomCreate(RoomBase):
     hotel_id: int
+    is_booked: bool = False
     board_type_id: int
     amenity: AmenityBase
