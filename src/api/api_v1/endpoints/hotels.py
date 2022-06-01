@@ -1,4 +1,5 @@
-from typing import List
+from datetime import datetime
+from typing import List, Optional
 from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
 
@@ -15,6 +16,36 @@ from api.dependencies import get_current_active_superuser
 from crud.hotels import hotel, facility_group, address
 
 router = APIRouter()
+
+
+@router.get("/search/list", status_code=status.HTTP_200_OK)
+async def search_hotels(
+    city: Optional[str] = None,
+    area: Optional[str] = None,
+    is_booked: Optional[bool] = False,
+    adult: Optional[int] = 2,
+    child: Optional[int] = 1,
+    max_occupancies: Optional[int] = 4,
+    min_rate: Optional[int] = 0,
+    max_rate: Optional[int] = 10000,
+    rating_value: Optional[int] = 3,
+    skip: int = 0,
+    limit: int = 10,
+):
+    hotels = await hotel.get_many_filtered(
+        skip,
+        limit,
+        rating_value,
+        city,
+        area,
+        adult,
+        child,
+        is_booked,
+        max_occupancies,
+        min_rate,
+        max_rate,
+    )
+    return hotels
 
 
 @router.get("/", response_model=List[HotelOut], status_code=status.HTTP_200_OK)
