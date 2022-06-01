@@ -10,4 +10,5 @@ python-dotenv
 black
 flake8
 ujson
+orjson
 databases
