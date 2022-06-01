@@ -25,7 +25,6 @@ class AmenityBase(BaseModel):
     connecting_rooms: Optional[bool] = False
     cooker: Optional[bool] = False
     dining_area: Optional[bool] = False
-    disability_friendly: Optional[bool] = False
     electric_kettle: Optional[bool] = False
     garden_view: Optional[bool] = False
     hairdryer: Optional[bool] = False

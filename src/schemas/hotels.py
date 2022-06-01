@@ -16,7 +16,6 @@ class FacilityGroupBase(BaseModel):
     airport_shuttle: Optional[bool] = False
     early_checkin: Optional[bool] = False
     late_checkout: Optional[bool] = False
-    air_conditioning: Optional[bool] = False
     kid_friendly: Optional[bool] = False
     couple_friendly: Optional[bool] = False
     disability_friendly: Optional[bool] = False
