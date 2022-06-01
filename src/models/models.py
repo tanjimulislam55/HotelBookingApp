@@ -1,12 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import (
-    Column,
-    Float,
-    Integer,
-    String,
-    Boolean,
-    ForeignKey,
-)
+from sqlalchemy import Column, Float, Integer, String, Boolean, ForeignKey, DateTime
 
 from .base import BaseModel
 
@@ -107,6 +100,9 @@ class Room(BaseModel):
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
     rate = Column(Integer)  # sort/filter key
+    check_in = Column(DateTime)
+    check_out = Column(DateTime)
+    is_booked = Column(Boolean, default=False)
     board_type_id = Column(ForeignKey("board_types.id", ondelete="SET NULL"))
     hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 

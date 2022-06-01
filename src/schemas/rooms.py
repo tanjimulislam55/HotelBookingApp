@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel
 from typing import Optional
 
@@ -66,6 +67,11 @@ class RoomOut(
     RoomBase,
 ):
     id: int
+    check_in: Optional[datetime]
+    check_out: Optional[datetime]
+    is_booked: Optional[bool] = False
+    hotel_id: int
+    board_type_id: int
     amenity: Optional[AmenityOut] = None
 
     class Config:
