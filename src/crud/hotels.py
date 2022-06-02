@@ -1,6 +1,5 @@
 from typing import Optional
 from sqlalchemy import select, and_
-from sqlalchemy.orm import joinedload
 
 from schemas.hotels import (
     HotelCreate,
@@ -10,7 +9,7 @@ from schemas.hotels import (
     AddressCreate,
     AddressUpdate,
 )
-from models import Hotel, FacilityGroup, Address, Room
+from models import Hotel, FacilityGroup, Address
 from .base import CRUDBase
 from utils.db import database
 
@@ -22,32 +21,20 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
 
     async def get_many_filtered(
         self,
-        skip,
-        limit,
-        rating_value: str,
+        skip: int,
+        limit: int,
+        rating_value: int,
         city: str,
         area: str,
-        adult: int,
-        child: int,
-        is_booked: bool,
-        max_occupancies: int,
-        min_rate: int,
-        max_rate: int,
     ):
         query = (
             select(Hotel)
-            .options(joinedload(Hotel.rooms))
-            .options(joinedload(Hotel.address))
+            .join(Address)
             .where(
                 and_(
                     Hotel.rating_value == rating_value,
-                    Address.city == city,
-                    Address.area == area,
-                    Room.adult == adult,
-                    Room.child == child,
-                    Room.is_booked == is_booked,
-                    Room.max_occupancies == max_occupancies,
-                    Room.rate.between(min_rate, max_rate),
+                    Address.city.like(f"{city}%"),
+                    Address.area.like(f"{area}%"),
                 )
             )
             .offset(skip)

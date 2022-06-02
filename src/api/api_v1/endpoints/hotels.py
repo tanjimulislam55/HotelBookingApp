@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import List, Optional
+from typing import List
 from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
 
@@ -13,9 +12,10 @@ from schemas import (
     RoomOut,
     AmenityOut,
 )
-from models import User
+from models import User, Hotel, Room
 from api.dependencies import get_current_active_superuser
 from crud.hotels import hotel, facility_group, address
+from crud.rooms import room
 
 router = APIRouter()
 
@@ -34,32 +34,35 @@ async def search_hotels(
     skip: int = 0,
     limit: int = 10,
 ):
-    hotels = await hotel.get_many_filtered(
-        skip,
-        limit,
-        rating_value,
-        city,
-        area,
-        adult,
-        child,
-        is_booked,
-        max_occupancies,
-        min_rate,
-        max_rate,
+    hotels: List[Hotel] = await hotel.get_many_filtered(
+        skip, limit, rating_value, city, area
     )
-    return hotels
-    return [
-        {
+    response = []
+    for hotel_info in hotels:
+        rooms: List[Room] = await room.get_many_filtered(
+            skip,
+            limit,
+            hotel_info.id,
+            adult,
+            child,
+            is_booked,
+            max_occupancies,
+            min_rate,
+            max_rate,
+        )
+        if not rooms:
+            continue
+        result = {
             **HotelOut(**hotel_info).dict(),
             "facility_group": FacilityGroupOut(**hotel_info),
             "address": AddressOut(**hotel_info),
-            "rooms": {
-                **RoomOut(**hotel_info).dict(),
-                "amenity": AmenityOut(**hotel_info),
-            },
+            "rooms": [
+                {**RoomOut(**room_info).dict(), "amenity": AmenityOut(**room_info)}
+                for room_info in rooms
+            ],
         }
-        for hotel_info in hotels
-    ]
+        response.append(result)
+    return response
 
 
 @router.get("/", response_model=List[HotelOut], status_code=status.HTTP_200_OK)

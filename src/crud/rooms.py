@@ -1,5 +1,5 @@
 from typing import Optional, List
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 from schemas.rooms import RoomCreate, RoomUpdate, AmenityCreate, AmenityUpdate
 from models import Room, Amenity
@@ -17,6 +17,36 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
             )
             return await database.fetch_all(query)
         return await super().get_many(skip, limit)
+
+    async def get_many_filtered(
+        self,
+        skip: int,
+        limit: int,
+        hotel_id: int,
+        adult: int,
+        child: int,
+        is_booked: bool,
+        max_occupancies: int,
+        min_rate: int,
+        max_rate: int,
+    ):
+        query = (
+            select(Room)
+            .where(
+                and_(
+                    Room.hotel_id == hotel_id,
+                    Room.adult == adult,
+                    Room.child == child,
+                    Room.is_booked == is_booked,
+                    Room.max_occupancies == max_occupancies,
+                    Room.rate.between(min_rate, max_rate),
+                )
+            )
+            .offset(skip)
+            .limit(limit)
+        )
+
+        return await database.fetch_all(query)
 
 
 room = CRUDRoom(Room)
