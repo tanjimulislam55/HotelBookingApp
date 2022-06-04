@@ -44,6 +44,8 @@ async def get_multiple_rooms_of_hotels(
 @router.get("/{room_id}", response_model=RoomOut, status_code=status.HTTP_200_OK)
 async def get_a_room(room_id: int):
     room_info = await room.get_one(room_id)
+    if not room_info:
+        return None
     return {
         **RoomOut(**room_info).dict(),
         "amenity": AmenityOut(**room_info),

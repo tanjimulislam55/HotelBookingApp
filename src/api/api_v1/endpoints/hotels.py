@@ -22,14 +22,14 @@ router = APIRouter()
 
 @router.get("/search/list", status_code=status.HTTP_200_OK)
 async def search_hotels(
-    city: str,
-    area: str,
+    city: str = None,
+    area: str = None,
     is_booked: bool = False,
     adult: int = 2,
     child: int = 1,
     max_occupancies: int = 4,
     min_rate: int = 0,
-    max_rate: int = 10000,
+    max_rate: int = 100000,
     rating_value: int = 3,
     skip: int = 0,
     limit: int = 10,
@@ -84,6 +84,8 @@ async def get_multiple_hotels(
 @router.get("/{hotel_id}", response_model=HotelOut, status_code=status.HTTP_200_OK)
 async def get_a_hotel(hotel_id: int):
     hotel_info = await hotel.get_one(hotel_id)
+    if not hotel_info:
+        return None
     return {
         **HotelOut(**hotel_info).dict(),
         "facility_group": FacilityGroupOut(**hotel_info),
