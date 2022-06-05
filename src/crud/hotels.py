@@ -1,5 +1,5 @@
 from typing import Optional, Union
-from sqlalchemy import select, and_, or_
+from sqlalchemy import select, or_
 
 from schemas.hotels import (
     HotelCreate,
@@ -30,6 +30,9 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
         query = (
             select(Hotel)
             .join(Address)
+            .where(
+                Hotel.id == Address.hotel_id,
+            )
             .where(
                 or_(
                     Hotel.rating_value == rating_value,

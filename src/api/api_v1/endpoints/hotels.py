@@ -27,7 +27,6 @@ async def search_hotels(
     is_booked: bool = False,
     adult: int = 2,
     child: int = 1,
-    max_occupancies: int = 4,
     min_rate: int = 0,
     max_rate: int = 100000,
     rating_value: int = 3,
@@ -37,6 +36,8 @@ async def search_hotels(
     hotels: List[Hotel] = await hotel.get_many_filtered(
         skip, limit, rating_value, city, area
     )
+    for h in hotels:
+        print(h.name)
     response = []
     for hotel_info in hotels:
         rooms: List[Room] = await room.get_many_filtered(
@@ -46,7 +47,6 @@ async def search_hotels(
             adult,
             child,
             is_booked,
-            max_occupancies,
             min_rate,
             max_rate,
         )

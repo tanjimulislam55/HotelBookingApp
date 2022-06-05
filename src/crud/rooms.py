@@ -26,7 +26,6 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
         adult: int,
         child: int,
         is_booked: bool,
-        max_occupancies: int,
         min_rate: int,
         max_rate: int,
     ):
@@ -38,7 +37,6 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
                     Room.adult == adult,
                     Room.child == child,
                     Room.is_booked == is_booked,
-                    Room.max_occupancies >= max_occupancies,
                     Room.rate.between(min_rate, max_rate),
                 )
             )
