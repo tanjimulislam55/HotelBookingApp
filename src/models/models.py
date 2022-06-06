@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Float, Integer, String, Boolean, ForeignKey, DateTime
+from sqlalchemy import Column, Float, Integer, String, Boolean, ForeignKey, Date
 
 from .base import BaseModel
 
@@ -15,6 +15,8 @@ class User(BaseModel):
     birth_date = Column(String(10))
     password = Column(String(255), nullable=False)
     is_superuser = Column(Boolean, default=False)
+
+    booked_by_users = relationship("BookedByUser", back_populates="user")
 
 
 class Hotel(BaseModel):
@@ -99,8 +101,6 @@ class Room(BaseModel):
     max_occupancies = Column(Integer)
     available_room = Column(Integer)
     rate = Column(Integer)  # sort/filter key
-    check_in = Column(DateTime)
-    check_out = Column(DateTime)
     is_booked = Column(Boolean, default=False)
     board_type_id = Column(ForeignKey("board_types.id", ondelete="SET NULL"))
     hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
@@ -109,6 +109,19 @@ class Room(BaseModel):
     images = relationship("Image", back_populates="room", lazy="joined")
     board_type = relationship("BoardType", back_populates="rooms")
     hotel = relationship("Hotel", back_populates="rooms")
+    booked_by_users = relationship("BookedByUser", back_populates="room")
+
+
+class BookedByUser(BaseModel):
+    __tablename__ = "booked_by_users"
+
+    check_in = Column(Date)
+    check_out = Column(Date)
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
+    room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
+
+    user = relationship("User", back_populates="booked_by_users")
+    room = relationship("Room", back_populates="booked_by_users")
 
 
 class Amenity(BaseModel):

@@ -66,8 +66,6 @@ class RoomOut(
     RoomBase,
 ):
     id: int
-    check_in: Optional[datetime]
-    check_out: Optional[datetime]
     is_booked: Optional[bool] = False
     hotel_id: int
     board_type_id: int
