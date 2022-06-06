@@ -1,5 +1,5 @@
 from sqlalchemy.orm import relationship
-from sqlalchemy import Column, Float, Integer, String, Boolean, ForeignKey, Date
+from sqlalchemy import Column, Float, Integer, String, Boolean, ForeignKey, Date, Text
 
 from .base import BaseModel
 
@@ -35,6 +35,7 @@ class Hotel(BaseModel):
     )
     address = relationship("Address", back_populates="hotel", lazy="joined")
     rooms = relationship("Room", back_populates="hotel")
+    feedbacks = relationship("Feedback", back_populates="hotel")
 
 
 class FacilityGroup(BaseModel):
@@ -59,6 +60,7 @@ class FacilityGroup(BaseModel):
     hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"))
 
     hotel = relationship("Hotel", back_populates="facility_group")
+    feedbacks = relationship("Feedback", back_populates="user")
 
 
 class Facility(BaseModel):
@@ -170,3 +172,15 @@ class Image(BaseModel):
     room_id = Column(Integer, ForeignKey("rooms.id", ondelete="CASCADE"))
 
     room = relationship("Room", back_populates="images")
+
+
+class Feedback(BaseModel):
+    __tablename__ = "feedbacks"
+
+    rating_value = Column(Integer)
+    review_comment = Column(Text)
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
+
+    user = relationship("User", back_populates="feedbacks")
+    hotel = relationship("Hotel", back_populates="feedbacks")
