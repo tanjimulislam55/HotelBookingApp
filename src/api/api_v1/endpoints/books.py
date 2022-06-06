@@ -27,7 +27,7 @@ async def book_a_room(
     book_in: BookedByUserCreate,
     current_user: User = Depends(get_current_user),
 ):
-    booked_by_user_info = await booked_by_user.is_booked(
+    booked_by_user_info = await booked_by_user.get_many_by_booked_date(
         book_in.check_in, book_in.check_out, room_id
     )
     if booked_by_user_info:

@@ -9,7 +9,9 @@ from utils.db import database
 
 
 class CRUDBookedByUser(CRUDBase[BookedByUser, BookedByUserCreate, None]):
-    async def is_booked(self, check_in: date, check_out: date, room_id: int):
+    async def get_many_by_booked_date(
+        self, check_in: date, check_out: date, room_id: int
+    ):
         query = (
             select(BookedByUser)
             .where(BookedByUser.room_id == room_id)
