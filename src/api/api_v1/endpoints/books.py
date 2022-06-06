@@ -19,16 +19,13 @@ async def get_multiple_bookings(
     return await booked_by_user.get_many(skip, limit)
 
 
-@router.post(
-    "/{room_id}", response_model=BookedByUserOut, status_code=status.HTTP_201_CREATED
-)
+@router.post("/", response_model=BookedByUserOut, status_code=status.HTTP_201_CREATED)
 async def book_a_room(
-    room_id: int,
     book_in: BookedByUserCreate,
     current_user: User = Depends(get_current_user),
 ):
     booked_by_user_info = await booked_by_user.get_many_by_booked_date(
-        book_in.check_in, book_in.check_out, room_id
+        book_in.check_in, book_in.check_out, book_in.room_id
     )
     if booked_by_user_info:
         raise HTTPException(
