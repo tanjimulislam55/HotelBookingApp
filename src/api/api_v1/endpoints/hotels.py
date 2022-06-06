@@ -1,6 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, status, Response
 from fastapi.exceptions import HTTPException
+from datetime import date
 
 from schemas import (
     HotelCreate,
@@ -16,28 +17,30 @@ from models import User, Hotel, Room
 from api.dependencies import get_current_active_superuser
 from crud.hotels import hotel, facility_group, address
 from crud.rooms import room
+from crud.books import booked_by_user
 
 router = APIRouter()
 
 
 @router.get("/search/list", status_code=status.HTTP_200_OK)
 async def search_hotels(
+    check_in: date,
+    check_out: date,
     city: str = None,
     area: str = None,
+    rating_value: int = None,
     is_booked: bool = False,
     adult: int = 2,
     child: int = 1,
     min_rate: int = 0,
     max_rate: int = 100000,
-    rating_value: int = 3,
     skip: int = 0,
     limit: int = 10,
 ):
     hotels: List[Hotel] = await hotel.get_many_filtered(
         skip, limit, rating_value, city, area
     )
-    for h in hotels:
-        print(h.name)
+    print(hotels)
     response = []
     for hotel_info in hotels:
         rooms: List[Room] = await room.get_many_filtered(
@@ -50,6 +53,11 @@ async def search_hotels(
             min_rate,
             max_rate,
         )
+        for room_info in rooms:
+            if await booked_by_user.get_many_by_booked_date(
+                check_in, check_out, room_info.id
+            ):
+                rooms.remove(room_info)
         if not rooms:
             continue
         result = {
@@ -71,6 +79,27 @@ async def get_multiple_hotels(
     limit: int = 10,
 ):
     hotels = await hotel.get_many(skip, limit)
+    return [
+        {
+            **HotelOut(**hotel_info).dict(),
+            "facility_group": FacilityGroupOut(**hotel_info),
+            "address": AddressOut(**hotel_info),
+        }
+        for hotel_info in hotels
+    ]
+
+
+@router.get("/filtered", response_model=List[HotelOut], status_code=status.HTTP_200_OK)
+async def get_related_hotels_filtered(
+    city: str = None,
+    area: str = None,
+    rating_value: int = None,
+    skip: int = 0,
+    limit: int = 5,
+):
+    hotels: List[Hotel] = await hotel.get_many_filtered(
+        skip, limit, rating_value, city, area
+    )
     return [
         {
             **HotelOut(**hotel_info).dict(),
