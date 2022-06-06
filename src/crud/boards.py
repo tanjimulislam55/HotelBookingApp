@@ -1,9 +1,9 @@
 from schemas.boards import BoardTypeCreate, BoardTypeUpdate
+from typing import Optional
+from sqlalchemy import select
+
 from models import BoardType
 from .base import CRUDBase
-from sqlalchemy import select
-from typing import Optional
-
 from utils.db import database
 
 
