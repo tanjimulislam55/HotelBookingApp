@@ -17,6 +17,7 @@ class User(BaseModel):
     is_superuser = Column(Boolean, default=False)
 
     booked_by_users = relationship("BookedByUser", back_populates="user")
+    feedbacks = relationship("Feedback", back_populates="user")
 
 
 class Hotel(BaseModel):
@@ -60,7 +61,6 @@ class FacilityGroup(BaseModel):
     hotel_id = Column(Integer, ForeignKey("hotels.id", ondelete="CASCADE"))
 
     hotel = relationship("Hotel", back_populates="facility_group")
-    feedbacks = relationship("Feedback", back_populates="user")
 
 
 class Facility(BaseModel):
