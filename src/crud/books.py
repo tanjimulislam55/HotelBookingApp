@@ -1,5 +1,5 @@
 from datetime import date
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, and_
 from typing import List
 
 
@@ -24,6 +24,18 @@ class CRUDBookedByUser(CRUDBase[BookedByUser, BookedByUserCreate, None]):
             )
         )
 
+        return await database.fetch_all(query)
+
+    async def get_many_filtered_by_hotel_user_id_date(
+        self, hotel_id: int, user_id: int, current_date: date
+    ) -> List[BookedByUser]:
+        query = select(BookedByUser).where(
+            and_(
+                BookedByUser.user_id == user_id,
+                BookedByUser.hotel_id == hotel_id,
+                BookedByUser.check_out < current_date,
+            )
+        )
         return await database.fetch_all(query)
 
 
