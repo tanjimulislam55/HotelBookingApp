@@ -37,6 +37,7 @@ class Hotel(BaseModel):
     address = relationship("Address", back_populates="hotel", lazy="joined")
     rooms = relationship("Room", back_populates="hotel")
     feedbacks = relationship("Feedback", back_populates="hotel")
+    booked_by_users = relationship("BookedByUser", back_populates="hotel")
 
 
 class FacilityGroup(BaseModel):
@@ -121,9 +122,11 @@ class BookedByUser(BaseModel):
     check_out = Column(Date)
     user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
     room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
     user = relationship("User", back_populates="booked_by_users")
     room = relationship("Room", back_populates="booked_by_users")
+    hotel = relationship("Hotel", back_populates="booked_by_users")
 
 
 class Amenity(BaseModel):
