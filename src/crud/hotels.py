@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 from sqlalchemy import select, or_
 
 from schemas.hotels import (
@@ -26,7 +26,7 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
         rating_value: Union[int, None],
         city: Union[str, None],
         area: Union[str, None],
-    ):
+    ) -> List[Hotel]:
         query = (
             select(Hotel)
             .join(Address)

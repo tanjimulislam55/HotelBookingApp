@@ -1,10 +1,10 @@
-from schemas.boards import BoardTypeCreate, BoardTypeUpdate
 from typing import Optional
 from sqlalchemy import select
 
 from models import BoardType
 from .base import CRUDBase
 from utils.db import database
+from schemas.boards import BoardTypeCreate, BoardTypeUpdate
 
 
 class CRUDBoardType(CRUDBase[BoardType, BoardTypeCreate, BoardTypeUpdate]):

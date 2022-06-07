@@ -28,7 +28,7 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
         is_booked: bool,
         min_rate: int,
         max_rate: int,
-    ):
+    ) -> List[Room]:
         query = (
             select(Room)
             .where(
