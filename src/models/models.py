@@ -18,6 +18,7 @@ class User(BaseModel):
 
     booked_by_users = relationship("BookedByUser", back_populates="user")
     feedbacks = relationship("Feedback", back_populates="user")
+    carts = relationship("Cart", back_populates="user")
 
 
 class Hotel(BaseModel):
@@ -38,6 +39,7 @@ class Hotel(BaseModel):
     rooms = relationship("Room", back_populates="hotel")
     feedbacks = relationship("Feedback", back_populates="hotel")
     booked_by_users = relationship("BookedByUser", back_populates="hotel")
+    carts = relationship("Cart", back_populates="hotel")
 
 
 class FacilityGroup(BaseModel):
@@ -113,20 +115,7 @@ class Room(BaseModel):
     board_type = relationship("BoardType", back_populates="rooms")
     hotel = relationship("Hotel", back_populates="rooms")
     booked_by_users = relationship("BookedByUser", back_populates="room")
-
-
-class BookedByUser(BaseModel):
-    __tablename__ = "booked_by_users"
-
-    check_in = Column(Date)
-    check_out = Column(Date)
-    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
-    room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
-    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
-
-    user = relationship("User", back_populates="booked_by_users")
-    room = relationship("Room", back_populates="booked_by_users")
-    hotel = relationship("Hotel", back_populates="booked_by_users")
+    carts = relationship("Cart", back_populates="room")
 
 
 class Amenity(BaseModel):
@@ -177,6 +166,20 @@ class Image(BaseModel):
     room = relationship("Room", back_populates="images")
 
 
+class BookedByUser(BaseModel):
+    __tablename__ = "booked_by_users"
+
+    check_in = Column(Date)
+    check_out = Column(Date)
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
+    room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
+
+    user = relationship("User", back_populates="booked_by_users")
+    room = relationship("Room", back_populates="booked_by_users")
+    hotel = relationship("Hotel", back_populates="booked_by_users")
+
+
 class Feedback(BaseModel):
     __tablename__ = "feedbacks"
 
@@ -187,3 +190,15 @@ class Feedback(BaseModel):
 
     user = relationship("User", back_populates="feedbacks")
     hotel = relationship("Hotel", back_populates="feedbacks")
+
+
+class Cart(BaseModel):
+    __tablename__ = "carts"
+
+    user_id = Column(ForeignKey("users.id", ondelete="CASCADE"))
+    room_id = Column(ForeignKey("rooms.id", ondelete="CASCADE"))
+    hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
+
+    user = relationship("User", back_populates="carts")
+    room = relationship("Room", back_populates="carts")
+    hotel = relationship("Hotel", back_populates="carts")
