@@ -34,7 +34,5 @@ async def get_image(image_name: str):
     filename = os.path.join(directory, f"{image_name}.jpg")
     is_file = os.path.exists(filename)
     if is_file:
-        return FileResponse(
-            directory, filename=f"{image_name}.jpg", media_type="image/jpg"
-        )
+        return FileResponse(filename, media_type="image/jpg")
     return {"error": "File not found"}
