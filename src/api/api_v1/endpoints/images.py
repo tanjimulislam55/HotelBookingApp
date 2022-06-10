@@ -14,6 +14,7 @@ from schemas.images import (
 from models import User
 from api.dependencies import get_current_active_superuser
 from settings import settings
+from crud.images import room_image, hotel_image
 
 router = APIRouter()
 
@@ -34,10 +35,16 @@ async def upload_file(file_in: UploadFile = File(...)):
     return "File already exists"
 
 
-@router.get("/{name}")
-async def get_image(name: str, room_id: int, hotel_id: int):
-    imaage_name = os.path.join(directory, f"{name}.jpg")
-    is_file = os.path.exists(imaage_name)
-    if is_file:
-        return FileResponse(imaage_name, media_type="image/jpg")
-    return {"error": "File not found"}
+@router.get("/")
+async def get_multiple_images(room_id: int, hotel_id: int):
+    image_name = str()
+    if room_id and not room_id:
+        infos = await room_image.get_many_by_room_id(room_id)
+        image_names = [os.path.join(directory, f"{name}.jpg") for name in infos]
+    if hotel_id and not room_id:
+        infos = await hotel_image.get_many_by_hotel_id(hotel_id)
+        image_names = [os.path.join(directory, f"{name}.jpg") for name in infos]
+    # is_file = os.path.exists(image_name)
+    # if is_file:
+    #     return FileResponse(image_name, media_type="image/jpg")
+    # return {"error": "File not found"}
