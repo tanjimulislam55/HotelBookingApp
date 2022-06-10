@@ -111,7 +111,6 @@ class Room(BaseModel):
     hotel_id = Column(ForeignKey("hotels.id", ondelete="CASCADE"))
 
     amenity = relationship("Amenity", back_populates="room", lazy="joined")
-    images = relationship("Image", back_populates="room", lazy="joined")
     board_type = relationship("BoardType", back_populates="rooms")
     hotel = relationship("Hotel", back_populates="rooms")
     booked_by_users = relationship("BookedByUser", back_populates="room")
@@ -154,18 +153,6 @@ class Amenity(BaseModel):
     room = relationship("Room", back_populates="amenity")
 
 
-class Image(BaseModel):
-    __tablename__ = "images"
-
-    title = Column(String(50))
-    description = Column(String(100))
-    source_url = Column(String(250))
-    file_name = Column(String(50))
-    room_id = Column(Integer, ForeignKey("rooms.id", ondelete="CASCADE"))
-
-    room = relationship("Room", back_populates="images")
-
-
 class BookedByUser(BaseModel):
     __tablename__ = "booked_by_users"
 
@@ -202,3 +189,21 @@ class Cart(BaseModel):
     user = relationship("User", back_populates="carts")
     room = relationship("Room", back_populates="carts")
     hotel = relationship("Hotel", back_populates="carts")
+
+
+class RoomImage(BaseModel):
+    __tablename__ = "room_images"
+
+    name = Column(String(50), index=True, nullable=False)
+    room_id: Column(Integer, index=True, nullable=False)
+    description = Column(String(100))
+    source_url = Column(String(250))
+
+
+class HotelImage(BaseModel):
+    __tablename__ = "hotel_images"
+
+    name = Column(String(50), index=True, nullable=False)
+    hotel_id: Column(Integer, index=True, nullable=False)
+    description = Column(String(100))
+    source_url = Column(String(250))

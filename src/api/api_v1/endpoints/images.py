@@ -5,7 +5,12 @@ from fastapi.exceptions import HTTPException
 import aiofiles
 import os
 
-# from schemas import ImageCreate, ImageBase
+from schemas.images import (
+    RoomImageCreate,
+    HotelImageCreate,
+    RoomImageOut,
+    HotelImageOut,
+)
 from models import User
 from api.dependencies import get_current_active_superuser
 from settings import settings
@@ -29,10 +34,10 @@ async def upload_file(file_in: UploadFile = File(...)):
     return "File already exists"
 
 
-@router.get("/{image_name}")
-async def get_image(image_name: str):
-    filename = os.path.join(directory, f"{image_name}.jpg")
-    is_file = os.path.exists(filename)
+@router.get("/{name}")
+async def get_image(name: str, room_id: int, hotel_id: int):
+    imaage_name = os.path.join(directory, f"{name}.jpg")
+    is_file = os.path.exists(imaage_name)
     if is_file:
-        return FileResponse(filename, media_type="image/jpg")
+        return FileResponse(imaage_name, media_type="image/jpg")
     return {"error": "File not found"}

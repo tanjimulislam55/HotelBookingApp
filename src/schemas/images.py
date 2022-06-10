@@ -3,17 +3,27 @@ from pydantic import BaseModel
 
 
 class ImageBase(BaseModel):
-    title: Optional[str]
+    name: str
     description: Optional[str]
-
-
-class ImageCreate(ImageBase):
     source_url: Optional[str]
-    file_name: Optional[str]
+
+
+class RoomImageCreate(ImageBase):
     room_id: int
 
 
-class ImageOut(ImageCreate):
+class HotelImageCreate(ImageBase):
+    hotel_id: int
+
+
+class RoomImageOut(RoomImageCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class HotelImageOut(HotelImageCreate):
     id: int
 
     class Config:
