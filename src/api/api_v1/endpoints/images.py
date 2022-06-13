@@ -1,50 +1,67 @@
-from typing import List
-from fastapi import APIRouter, UploadFile, File
-from fastapi.responses import FileResponse
-from fastapi.exceptions import HTTPException
+from fastapi import APIRouter, status, UploadFile, File, HTTPException
+from fastapi.responses import FileResponse, StreamingResponse, Response
 import aiofiles
 import os
+from uuid import uuid1
 
-from schemas.images import (
-    RoomImageCreate,
-    HotelImageCreate,
-    RoomImageOut,
-    HotelImageOut,
-)
 from models import User
 from api.dependencies import get_current_active_superuser
 from settings import settings
-from crud.images import room_image, hotel_image
+from utils.db import database
+from utils.zip import zipfile
 
 router = APIRouter()
 
 directory = settings.STATIC_DIR
 
 
-@router.post("/")
-async def upload_file(file_in: UploadFile = File(...)):
-    filename = os.path.join(directory, file_in.filename)
+@router.post("/", status_code=status.HTTP_201_CREATED)
+async def upload_file(
+    file_in: UploadFile = File(...), room_id: int = None, hotel_id: int = None
+):
+    id = uuid1()
+    unique_filename = f"{id}.jpg"
+    filename = os.path.join(directory, unique_filename)
     is_file = os.path.exists(filename)
+    if room_id and hotel_id:
+        raise HTTPException(
+            status_code=status.HTTP_406_NOT_ACCEPTABLE,
+            detail="Either room id or hotel id is acceptable",
+        )
     if not is_file:
         async with aiofiles.open(filename, "wb") as f:
             while content := await file_in.read(1024):  # async read chunk
                 await f.write(content)
+            if room_id:
+                query = (
+                    "INSERT INTO room_images(name, room_id) VALUES (:name, :room_id)"
+                )
+                values = {"name": unique_filename, "room_id": room_id}
+                await database.execute(query=query, values=values)
+            if hotel_id:
+                query = (
+                    "INSERT INTO hotel_images(name, hotel_id) VALUES (:name, :hotel_id)"
+                )
+                values = {"name": unique_filename, "hotel_id": hotel_id}
+                await database.execute(query=query, values=values)
             return {
                 "Uploaded File": file_in.filename,
             }
-    return "File already exists"
+    else:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="File name conflicted"
+        )
 
 
 @router.get("/")
-async def get_multiple_images(room_id: int, hotel_id: int):
-    image_name = str()
-    if room_id and not room_id:
-        infos = await room_image.get_many_by_room_id(room_id)
-        image_names = [os.path.join(directory, f"{name}.jpg") for name in infos]
-    if hotel_id and not room_id:
-        infos = await hotel_image.get_many_by_hotel_id(hotel_id)
-        image_names = [os.path.join(directory, f"{name}.jpg") for name in infos]
-    # is_file = os.path.exists(image_name)
-    # if is_file:
-    #     return FileResponse(image_name, media_type="image/jpg")
-    # return {"error": "File not found"}
+async def get_multiple_images_as_zipped(room_id: int = None, hotel_id: int = None):
+    if room_id:
+        query = "SELECT * FROM room_images WHERE room_id = :room_id"
+        values = {"room_id": room_id}
+        infos = await database.fetch_all(query=query, values=values)
+    elif hotel_id:
+        query = "SELECT * FROM hotel_images WHERE hotel_id = :hotel_id"
+        values = {"hotel_id": hotel_id}
+        infos = await database.fetch_all(query=query, values=values)
+    image_names = [info.name for info in infos]
+    return zipfile(image_names)
