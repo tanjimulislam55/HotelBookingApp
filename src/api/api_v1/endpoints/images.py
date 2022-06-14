@@ -16,7 +16,7 @@ directory = settings.STATIC_DIR
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def upload_file(
+async def upload_single_file(
     file_in: UploadFile = File(...), room_id: int = None, hotel_id: int = None
 ):
     id = uuid1()
@@ -53,7 +53,7 @@ async def upload_file(
         )
 
 
-@router.get("/")
+@router.get("/zipped")
 async def get_multiple_images_as_zipped(room_id: int = None, hotel_id: int = None):
     if room_id:
         query = "SELECT * FROM room_images WHERE room_id = :room_id"
@@ -65,3 +65,17 @@ async def get_multiple_images_as_zipped(room_id: int = None, hotel_id: int = Non
         infos = await database.fetch_all(query=query, values=values)
     image_names = [info.name for info in infos]
     return zipfile(image_names)
+
+
+@router.get("/")
+async def get_multiple_image_names(room_id: int = None, hotel_id: int = None):
+    if room_id:
+        query = "SELECT * FROM room_images WHERE room_id = :room_id"
+        values = {"room_id": room_id}
+        infos = await database.fetch_all(query=query, values=values)
+    elif hotel_id:
+        query = "SELECT * FROM hotel_images WHERE hotel_id = :hotel_id"
+        values = {"hotel_id": hotel_id}
+        infos = await database.fetch_all(query=query, values=values)
+    image_names = [info.name for info in infos]
+    return image_names
