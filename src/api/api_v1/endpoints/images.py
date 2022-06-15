@@ -1,14 +1,16 @@
 from fastapi import APIRouter, status, UploadFile, File, HTTPException, Depends
 from fastapi.responses import FileResponse
+from typing import List
+from uuid import uuid1
 import aiofiles
 import os
-from uuid import uuid1
 
 from models import User
 from api.dependencies import get_current_active_superuser
 from settings import settings
 from utils.db import database
 from utils.zip import zipfile
+from schemas.images import ImageOut
 
 router = APIRouter()
 
@@ -56,7 +58,7 @@ async def upload_single_file(
         )
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[ImageOut])
 async def get_multiple_images(
     room_id: int = None, hotel_id: int = None, zipped: bool = False
 ):
@@ -68,10 +70,9 @@ async def get_multiple_images(
         query = "SELECT * FROM hotel_images WHERE hotel_id = :hotel_id"
         values = {"hotel_id": hotel_id}
         infos = await database.fetch_all(query=query, values=values)
-    image_names = [info.name for info in infos]
     if zipped:
-        return zipfile(image_names)
-    return image_names
+        return zipfile([info.name for info in infos])
+    return [ImageOut(**info).dict() for info in infos]
 
 
 @router.get(
