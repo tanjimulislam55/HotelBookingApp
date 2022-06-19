@@ -7,7 +7,8 @@ class ImageOut(BaseModel):
     name: str
     source_url: Union[str, None]
     description: Union[str, None]
-    room_id: int
+    room_id: Union[int, None]
+    hotel_id: Union[int, None]
 
     class Config:
         orm_mode = True
