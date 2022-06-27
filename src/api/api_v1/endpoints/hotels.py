@@ -123,7 +123,9 @@ async def get_a_hotel(hotel_id: int):
 
 
 @router.post("/", response_model=HotelOut, status_code=status.HTTP_201_CREATED)
-async def create_new_hotel(hotel_in: HotelCreate):
+async def create_new_hotel(
+    hotel_in: HotelCreate, current_use: User = Depends(get_current_active_superuser)
+):
     hotel_info = await hotel.get_one_by_name(hotel_in.name)
     if hotel_info:
         raise HTTPException(

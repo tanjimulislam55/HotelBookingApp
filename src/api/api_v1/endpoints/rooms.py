@@ -53,7 +53,9 @@ async def get_a_room(room_id: int):
 
 
 @router.post("/", response_model=RoomOut, status_code=status.HTTP_201_CREATED)
-async def create_new_room(room_in: RoomCreate):
+async def create_new_room(
+    room_in: RoomCreate, current_use: User = Depends(get_current_active_superuser)
+):
     new_generated_room_id = await room.create(room_in.copy(exclude={"amenity"}))
     room_dict = room_in.copy(exclude={"amenity"}).dict()
     amenity_dict = room_in.amenity.dict()
