@@ -208,19 +208,21 @@ class HotelImage(BaseModel):
     description = Column(String(100))
     source_url = Column(String(250))
 
-#
-#class Packages(BaseModel):
-#    package_class = Column(String(20), index=True)
-#    description = Column(String(255))
-#    for_days = Column(Integer)
-#    is_tax_included = Column(Boolean)
-#    location = Column(String(50))
-#    place = Column(String(100))
-#    price_for_child_3_t_6 = Column(Integer)
-#    price_for_child_7_t_12 = Column(Integer)
-#    price_for_double = Column(Integer)
-#    price_for_infant = Column(Integer)
-#    price_for_single = Column(Integer)
-#    price_for_triple = Column(Integer)
-#    valid_from = Column(Date, nullable=False)
-#    valid_to = Column(Date, nullable=False)
+
+class Package(BaseModel):
+    __tablename__ = "packages"
+
+    package_class = Column(String(20), index=True)
+    description = Column(String(255))
+    for_days = Column(Integer)
+    is_tax_included = Column(Boolean)
+    location = Column(String(50))
+    place = Column(String(100))
+    price_for_child_3_t_6 = Column(Integer)
+    price_for_child_7_t_12 = Column(Integer)
+    price_for_double = Column(Integer)
+    price_for_infant = Column(Integer)
+    price_for_single = Column(Integer)
+    price_for_triple = Column(Integer)
+    valid_from = Column(Date, nullable=False)
+    valid_to = Column(Date, nullable=False)
