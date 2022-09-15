@@ -1,10 +1,11 @@
 from typing import List
-from fastapi import APIRouter, Depends, status, Response
+from fastapi import APIRouter, Depends, status, Response, HTTPException
 
 from schemas.carts import CartCreate, CartOut
 from models import User
 from api.dependencies import get_current_user
 from crud.carts import cart
+from utils.db import database
 
 router = APIRouter()
 
@@ -23,6 +24,20 @@ async def add_to_cart(
     cart_in: CartCreate,
     current_user: User = Depends(get_current_user),
 ):
+    query = f"SELECT room_id FROM carts WHERE user_id = {cart_in.user_id}"
+    async for row in database.iterate(query=query):
+        if row.room_id == cart_in.room_id:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Not permissible to add duplicate rooms of",
+            )
+    count = f"SELECT COUNT(*) FROM carts WHERE user_id = {cart_in.user_id}"
+    print(await database.execute(count))
+    if await database.execute(count) > 20:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Not permitted to add more than 20 rooms",
+        )
     new_generated_id = await cart.create(cart_in)
     return {**cart_in.dict(), "id": new_generated_id}
 
