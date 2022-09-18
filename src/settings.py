@@ -31,7 +31,7 @@ class Settings(BaseSettings):
         raise ValueError(v)
 
     PROJECT_NAME: str = "Hotel-Booking-E-Platform"
-    STATIC_DIR: str = "/home/king/Desktop/hotel/static"
+    STATIC_DIR: str = "/home/king/Downloads/Telegram Desktop/hotel/static"
     SENTRY_DSN: Optional[HttpUrl] = None
 
     class Config:
