@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import ORJSONResponse, UJSONResponse
+from fastapi.responses import UJSONResponse
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 import uvicorn
@@ -12,7 +12,7 @@ from api.api_v1.routers import api_router
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url=f"{settings.API_V1_STR}/openapi.json",
-    default_response_class=ORJSONResponse,
+    # default_response_class=ORJSONResponse,
 )
 
 if settings.BACKEND_CORS_ORIGINS:
