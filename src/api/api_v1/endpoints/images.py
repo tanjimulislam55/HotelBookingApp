@@ -27,6 +27,7 @@ async def upload_single_file(
     id = uuid1()
     unique_filename = f"{id}.jpg"
     filename = os.path.join(directory, unique_filename)
+    print("filename", filename)
     is_file = os.path.exists(filename)
     if room_id and hotel_id:
         raise HTTPException(
@@ -62,6 +63,7 @@ async def upload_single_file(
 async def get_multiple_images(
     room_id: int = None, hotel_id: int = None, zipped: bool = False
 ):
+    infos = []
     if room_id:
         query = "SELECT * FROM room_images WHERE room_id = :room_id"
         values = {"room_id": room_id}
@@ -83,3 +85,15 @@ async def get_multiple_image_response(image_name: str):
     if not os.path.exists(filename):
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Image not found")
     return filename
+
+
+@router.delete("/{image_name}", status_code=status.HTTP_202_ACCEPTED)
+async def remove_an_image(
+    image_name: str,
+    destination: str,
+    current_user: User = Depends(get_current_active_superuser),
+):
+    query = f"DELETE FROM {destination} WHERE name = '{image_name}'"
+    print(query)
+    await database.execute(query=query)
+    return {"file": image_name, "message": "successfully deleted"}
