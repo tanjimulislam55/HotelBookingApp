@@ -43,15 +43,21 @@ async def search_hotels(
     print(hotels)
     response = []
     for hotel_info in hotels:
-        rooms: List[Room] = await room.get_many_filtered(
+        # rooms: List[Room] = await room.get_many_filtered(
+        #     skip,
+        #     limit,
+        #     hotel_info.id,
+        #     adult,
+        #     child,
+        #     is_booked,
+        #     min_rate,
+        #     max_rate,
+        # )
+        rooms: List[Room] = await room.get_many_if_is_booked(
             skip,
             limit,
             hotel_info.id,
-            adult,
-            child,
             is_booked,
-            min_rate,
-            max_rate,
         )
         for room_info in rooms:
             if await booked_by_user.get_many_by_booked_date(
