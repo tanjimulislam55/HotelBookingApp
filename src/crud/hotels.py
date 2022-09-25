@@ -1,5 +1,5 @@
 from typing import Optional, Union, List
-from sqlalchemy import select, or_
+from sqlalchemy import select, or_, func
 
 from schemas.hotels import (
     HotelCreate,
@@ -10,7 +10,7 @@ from schemas.hotels import (
     AddressUpdate,
 )
 from models import Hotel, FacilityGroup, Address
-from .base import CRUDBase
+from crud.base import CRUDBase
 from utils.db import database
 
 
@@ -36,8 +36,8 @@ class CRUDHotel(CRUDBase[Hotel, HotelCreate, HotelUpdate]):
             .where(
                 or_(
                     Hotel.rating_value == rating_value,
-                    Address.city.like(f"{city}%"),
-                    Address.area.like(f"{area}%"),
+                    func.lower(Address.city) == func.lower(f"{city}"),
+                    func.lower(Address.area) == func.lower(f"{area}"),
                 )
             )
             .offset(skip)
