@@ -3,7 +3,7 @@ from sqlalchemy import select, and_
 
 from schemas.rooms import RoomCreate, RoomUpdate, AmenityCreate, AmenityUpdate
 from models import Room, Amenity
-from .base import CRUDBase
+from crud.base import CRUDBase
 from utils.db import database
 
 
@@ -17,6 +17,17 @@ class CRUDRoom(CRUDBase[Room, RoomCreate, RoomUpdate]):
             )
             return await database.fetch_all(query)
         return await super().get_many(skip, limit)
+
+    async def get_many_if_is_booked(
+        self, skip: int, limit: int, hotel_id: int, is_booked: bool
+    ) -> List[Room]:
+        query = (
+            select(Room)
+            .where(and_(Room.hotel_id == hotel_id, Room.is_booked == is_booked))
+            .offset(skip)
+            .limit(limit)
+        )
+        return await database.fetch_all(query)
 
     async def get_many_filtered(
         self,
